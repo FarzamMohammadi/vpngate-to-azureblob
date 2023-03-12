@@ -1,27 +1,14 @@
 import base64
-import fileinput
 import re
 import requests
 from bs4 import BeautifulSoup
 
 
-class Scraper:
+class VpnGateScraper:
 
-    def __init__(self, url):
-        self.url = url
+    def __init__(self):
+        self.url = 'http://www.vpngate.net/api/iphone/' #Same as home page but allocated for scraping
         self.page = requests.get(self.url)
-        html_text = BeautifulSoup(self.page.content, 'html.parser').get_text()
-
-        separated_text = re.split(',,|\n', html_text)
-
-        for row in separated_text:
-            file_in_string_format = self.base64_to_string(row.strip())
-
-            if file_in_string_format is not None:
-                # The client needs some additional configs in the .ovpn file to work
-                file_in_string_format = self.append_additional_required_vpn_configurations(file_in_string_format)
-
-                return
 
     def append_additional_required_vpn_configurations(self, file_in_string_format):
         heading_of_place_to_update = '# It is not recommended to modify it unless you have a particular need.'
@@ -62,22 +49,35 @@ class Scraper:
         return new_file
 
         
-
     def base64_to_string(self, s):
         try:
             return base64.b64decode(s).decode('utf-8')
         except:
             return None
-        
+            
+    def convert_cipher_to_fallback(self, s_line, cipher_key):
+        return s_line.replace(cipher_key, 'data-ciphers-fallback')
+    
     def is_layer_of_vpn_connection(self, s_line, layer_key):
         return s_line[:3] == layer_key
     
     def is_cipher(self, s_line, cipher_key):
          return s_line[:6] == cipher_key
-    
-    def convert_cipher_to_fallback(self, s_line, cipher_key):
-        return s_line.replace(cipher_key, 'data-ciphers-fallback')
+     
+    # Main runner 
+    def scrape_ovpn_files(self, number_of_files): 
+        ovpn_files = []
         
-            
-            
+        html_text = BeautifulSoup(self.page.content, 'html.parser').get_text()
+        separated_text = re.split(',,|\n', html_text)
+        
+        for row in separated_text:
+            file_in_string_format = self.base64_to_string(row.strip())
 
+            if file_in_string_format is not None:
+                # The client needs some additional configs in the .ovpn file to work
+                ovpn_file = self.append_additional_required_vpn_configurations(file_in_string_format)
+
+                ovpn_files.append(ovpn_file)
+
+                if ovpn_files.count <= number_of_files: return

@@ -1,4 +1,8 @@
-from Scraper.scraper import Scraper
+from Scraper.vpn_gate_scraper import VpnGateScraper
 
 if __name__ == '__main__':
-    scraper = Scraper('http://www.vpngate.net/api/iphone/')
+    scraper = VpnGateScraper()
+    
+    ovpn_files = scraper.scrape_ovpn_files(10)
+    
+    
