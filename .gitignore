@@ -2,3 +2,4 @@
 *.sty
 *.log
 **/__pycache__/
+data/*

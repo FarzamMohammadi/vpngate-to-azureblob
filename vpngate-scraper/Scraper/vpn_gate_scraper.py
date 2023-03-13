@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 class VpnGateScraper:
 
     def __init__(self):
-        self.url = 'http://www.vpngate.net/api/iphone/' #Same as home page but allocated for scraping
+        # URL of site allocated to scraping
+        self.url = 'http://www.vpngate.net/api/iphone/'
         self.page = requests.get(self.url)
 
     def append_additional_required_vpn_configurations(self, file_in_string_format):
@@ -80,4 +81,4 @@ class VpnGateScraper:
 
                 ovpn_files.append(ovpn_file)
 
-                if ovpn_files.count <= number_of_files: return
+                if len(ovpn_files) >= number_of_files: return ovpn_files
