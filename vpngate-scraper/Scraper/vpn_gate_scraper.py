@@ -36,7 +36,7 @@ class VpnGateScraper:
                 and cipher_fallback
                 and new_line is None # Prevents going through this once we attain the new line
                 and line.strip() == heading_of_place_to_update):
-                additional_required_configurations = f'\n\n{layer_of_connection}\n{cipher_fallback}'
+                additional_required_configurations = f'\n\n{layer_of_connection}{cipher_fallback}'
                 
                 new_line = line + additional_required_configurations
 
@@ -45,7 +45,7 @@ class VpnGateScraper:
 
             new_file_array.append(line)
 
-        new_file = '\n'.join(new_file_array)
+        new_file = ''.join(new_file_array)
 
         return new_file
 
@@ -57,7 +57,7 @@ class VpnGateScraper:
             return None
             
     def convert_cipher_to_fallback(self, s_line, cipher_key):
-        return s_line.replace(cipher_key, 'data-ciphers-fallback')
+        return s_line.replace(cipher_key, 'data-ciphers')
     
     def is_layer_of_vpn_connection(self, s_line, layer_key):
         return s_line[:3] == layer_key
